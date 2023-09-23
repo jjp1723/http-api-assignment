@@ -42,19 +42,37 @@
           break;
       }
 
-      const responseObject = await response.json();
-      content.innerHTML += `<p>${responseObject.message}</p>`;
+      response.text().then(text => {
+        const contentType = response.headers.get('Content-Type');
+
+        if(contentType === 'application/json'){
+          content.innerHTML += `<p>Message: ${JSON.parse(text).message}</p>`;
+        } else if(contentType === 'text/xml'){
+          const parsedResponse = new window.DOMParser().parseFromString(text, 'text/xml');
+          content.innerHTML += `<p>Message: ${parsedResponse.querySelector('message').textContent}</p>`;
+        }
+      });
     };
 
-    const sendFetch = async (url) => {
-      const response = await fetch(url);
+    const sendFetchRequest = async (url, acceptedType) => {
+      const options = {
+        method: 'GET',
+        headers: {'Accept': acceptedType}
+      }
+
+      const response = await fetch(url, options);
       handleResponse(response);
     };
 
     const init = () => {
       const pageSelector = document.getElementById('page');
       const typeSelector = document.getElementById('type');
+      const sendButton = document.getElementById('send');
+
+      sendButton.addEventListener('click', () => sendFetchRequest(pageSelector.value, typeSelector.value));
     }
+
+    window.onload = init;
   </script>
 </head>
 <body>
