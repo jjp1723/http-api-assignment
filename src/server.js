@@ -23,7 +23,8 @@ const urlStruct = {
   notFound: responseHandler.notFound,
 };
 
-// onRequest receives requests from the client and determines the response based on the requested url and the accepted header fro the request
+// onRequest receives requests from the client and determines the 
+//  response based on the requested url and the accepted header from the request
 const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
   const acceptedTypes = request.headers.accept.split(',');
